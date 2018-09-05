@@ -35,9 +35,7 @@ import (
 var (
 	numFrames  = flag.Int("frames", 12, "The number of frames to generate")
 	writeInfo  = flag.Bool("write-info", true, "Write info JSON to file")
-	fontFile   = flag.String("font-file", "IBMPlexMono-Regular.ttf", "The ttf font file to use")
 	frameWidth = flag.Int("frame-width", 854, "The width to generate thumbnails at")
-	fontBytes  []byte
 )
 
 func init() {
@@ -50,13 +48,6 @@ func main() {
 	err := os.MkdirAll("tmp", 0755)
 	if err != nil {
 		log.Error("Cannot create tmp directory")
-		log.Error(err)
-		return
-	}
-
-	fontBytes, err = ioutil.ReadFile(*fontFile)
-	if err != nil {
-		log.Error("Error loading font")
 		log.Error(err)
 		return
 	}

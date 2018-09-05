@@ -25,6 +25,8 @@ import (
 	"fmt"
 	"github.com/go-playground/log"
 	"github.com/golang/freetype"
+	"github.com/golang/freetype/truetype"
+	"golang.org/x/image/font/gofont/gomono"
 	"image"
 	"image/color"
 	"image/draw"
@@ -45,7 +47,16 @@ const (
 var (
 	text = image.Black
 	bg   = image.NewUniform(color.RGBA{0xE0, 0xEB, 0xF5, 0xff})
+	font *truetype.Font
 )
+
+func init() {
+	var err error
+	font, err = freetype.ParseFont(gomono.TTF)
+	if err != nil {
+		log.Panic(err)
+	}
+}
 
 func generateContactSheet(vid *Video, numFrames int) {
 	var FrameWidth int
@@ -89,12 +100,6 @@ func generateContactSheet(vid *Video, numFrames int) {
 
 	sheet := image.NewRGBA(image.Rect(0, 0, sheetWidth, sheetHeight))
 
-	font, err := freetype.ParseFont(fontBytes)
-	if err != nil {
-		log.Error(err)
-		return
-	}
-
 	draw.Draw(sheet, sheet.Bounds(), bg, image.ZP, draw.Src)
 	c := freetype.NewContext()
 	c.SetDPI(FontDPI)
@@ -106,7 +111,7 @@ func generateContactSheet(vid *Video, numFrames int) {
 
 	pt := freetype.Pt(10, 10+int(c.PointToFixed(FontSize)>>6))
 	for _, s := range vid.Filename {
-		_, err = c.DrawString(string(s), pt)
+		_, err := c.DrawString(string(s), pt)
 		if err != nil {
 			log.Error(err)
 			return
@@ -116,7 +121,7 @@ func generateContactSheet(vid *Video, numFrames int) {
 
 	pt = freetype.Pt(10, 20+FontSize+int(c.PointToFixed((FontSize))>>6))
 	for _, s := range "SHA1: " + vid.SHA1.Hex() {
-		_, err = c.DrawString(string(s), pt)
+		_, err := c.DrawString(string(s), pt)
 		if err != nil {
 			log.Error(err)
 			return
@@ -126,7 +131,7 @@ func generateContactSheet(vid *Video, numFrames int) {
 
 	pt = freetype.Pt(10, 60+FontSize+int(c.PointToFixed((FontSize))>>6))
 	for _, s := range fmt.Sprintf("Duration: %s, Dimmensions: %dx%d", stampToString(vid.Duration), vid.Width, vid.Height) {
-		_, err = c.DrawString(string(s), pt)
+		_, err := c.DrawString(string(s), pt)
 		if err != nil {
 			log.Error(err)
 			return
