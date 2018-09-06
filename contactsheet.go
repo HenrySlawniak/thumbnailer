@@ -35,7 +35,7 @@ import (
 )
 
 const (
-	GutterSize   = 20
+	GutterSize   = 50
 	FramesPerRow = 3
 
 	FontSize    = 40
@@ -45,7 +45,6 @@ const (
 )
 
 var (
-	text = image.Black
 	bg   = image.NewUniform(color.RGBA{0xE0, 0xEB, 0xF5, 0xff})
 	font *truetype.Font
 )
@@ -107,7 +106,7 @@ func generateContactSheet(vid *Video, numFrames int) {
 	c.SetFontSize(FontSize)
 	c.SetClip(sheet.Bounds())
 	c.SetDst(sheet)
-	c.SetSrc(text)
+	c.SetSrc(image.Black)
 
 	pt := freetype.Pt(10, 10+int(c.PointToFixed(FontSize)>>6))
 	for _, s := range vid.Filename {
@@ -145,9 +144,23 @@ func generateContactSheet(vid *Video, numFrames int) {
 		yOff := (row * FrameHeight) + GutterSize + HeaderSize + (GutterSize * row)
 		col := i % FramesPerRow
 		xOff := col*FrameWidth + GutterSize + (GutterSize * col)
-		// frameTime := stampToString(((float64(vid.Duration)) / float64(numFrames)) * float64(i))
 		rect := image.Rect(xOff, yOff, xOff+FrameWidth, yOff+FrameHeight)
 		draw.Draw(sheet, rect, frame, frame.Bounds().Min, draw.Src)
+
+		frameTime := stampToString(((float64(vid.Duration)) / float64(numFrames)) * float64(i))
+		stampSize := FontSize * 0.7
+		c.SetFontSize(stampSize)
+		c.SetSrc(image.Black)
+		pt := freetype.Pt(xOff, yOff+FrameHeight+int(c.PointToFixed(stampSize)>>6))
+		for _, s := range frameTime {
+			_, err := c.DrawString(string(s), pt)
+			if err != nil {
+				log.Error(err)
+				return
+			}
+			pt.X += c.PointToFixed(stampSize * FontSpacing)
+		}
+
 	}
 
 	outFile, err := os.Create(vid.Filename + ".png")
