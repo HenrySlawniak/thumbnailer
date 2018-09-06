@@ -36,8 +36,9 @@ import (
 )
 
 const (
-	GutterSize   = 50
-	FramesPerRow = 3
+	GutterSize    = 50
+	FramesPerRow  = 3
+	MinSheetWidth = 1200
 
 	FontSize    = 40
 	FontSpacing = 0.9
@@ -95,6 +96,9 @@ func generateContactSheet(vid *Video, numFrames int) {
 	rowCount := numFrames / FramesPerRow
 
 	sheetWidth := (FramesPerRow * FrameWidth) + ((FramesPerRow + 1) * GutterSize)
+	if sheetWidth < MinSheetWidth {
+		sheetWidth = MinSheetWidth
+	}
 	sheetHeight := (HeaderSize) + (rowCount * FrameHeight) + ((rowCount + 1) * GutterSize)
 	log.Infof("Sheet Dimmensions: %dx%d\n", sheetWidth, sheetHeight)
 

@@ -23,7 +23,30 @@ package main
 import (
 	"encoding/json"
 	"os/exec"
+	"strconv"
 )
+
+type ffprobeOutput struct {
+	Streams []ffprobeStreamInfo
+	Format  struct {
+		Duration   string
+		FormatName string `json:"format_name"`
+	}
+}
+
+type ffprobeStreamInfo struct {
+	Index            int
+	CodecType        string `json:"codec_type"`
+	CodecName        string `json:"codec_name"`
+	AverageFrameRate string `json:"avg_frame_rate"`
+	Width            int
+	Height           int
+}
+
+func (o ffprobeOutput) DurationSeconds() float64 {
+	f, _ := strconv.ParseFloat(o.Format.Duration, 64)
+	return f
+}
 
 func getFFProbeMetadata(path string) (*ffprobeOutput, error) {
 	binary := GetFFProbeBinary()
@@ -32,7 +55,7 @@ func getFFProbeMetadata(path string) (*ffprobeOutput, error) {
 		binary,
 		"-v", "error",
 		"-show_streams",
-		"-show_entries", "format=width,height,duration_ts,duration,index",
+		"-show_entries", "format=width,height,duration_ts,duration,index,codec_type,codec_name,format_name,avg_frame_rate",
 		"-print_format", "json",
 		path,
 	)

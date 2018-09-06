@@ -141,6 +141,7 @@ func ProcessFile(path string) {
 		log.Error(err)
 		return
 	}
+	video.Meta = meta
 	video.Duration = meta.DurationSeconds()
 
 	for _, stream := range meta.Streams {

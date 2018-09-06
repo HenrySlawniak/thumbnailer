@@ -23,7 +23,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -34,6 +33,7 @@ type Video struct {
 	SHA1     sha1sum
 	Width    int
 	Height   int
+	Meta     *ffprobeOutput
 }
 
 type sha1sum []byte
@@ -50,23 +50,4 @@ func (s *sha1sum) MarshalJSON() ([]byte, error) {
 
 func (s *sha1sum) Hex() string {
 	return strings.TrimLeft(fmt.Sprintf("%x", s), "&")
-}
-
-type ffprobeOutput struct {
-	Streams []ffprobeStreamInfo
-	Format  struct {
-		Duration string
-	}
-}
-
-type ffprobeStreamInfo struct {
-	Index     int
-	CodecType string `json:"codec_type"`
-	Width     int
-	Height    int
-}
-
-func (o ffprobeOutput) DurationSeconds() float64 {
-	f, _ := strconv.ParseFloat(o.Format.Duration, 64)
-	return f
 }
