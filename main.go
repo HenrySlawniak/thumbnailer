@@ -30,13 +30,24 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
 var (
 	numFrames  = flag.Int("frames", 12, "The number of frames to generate")
 	writeInfo  = flag.Bool("write-info", true, "Write info JSON to file")
 	frameWidth = flag.Int("frame-width", 854, "The width to generate thumbnails at")
+
+	buildTime string
+	commit    string
 )
+
+const binHelp = `This directory is used to store binaries for ffmpeg.
+
+Place ffmpeg.exe, ffprobe.exe or the appropriate linux binaries here.
+
+If no binaries are found, thumbnailer will use your PATH.
+`
 
 func init() {
 	flag.Parse()
@@ -45,9 +56,31 @@ func init() {
 }
 
 func main() {
+	if buildTime != "" {
+		log.Info("Built: " + buildTime)
+	}
+	if commit != "" {
+		log.Info("Revision: " + commit)
+	}
+	log.Info("Go: " + runtime.Version())
+
 	err := os.MkdirAll("tmp", 0755)
 	if err != nil {
 		log.Error("Cannot create tmp directory")
+		log.Error(err)
+		return
+	}
+
+	err = os.MkdirAll("bin", 0755)
+	if err != nil {
+		log.Error("Cannot create tmp directory")
+		log.Error(err)
+		return
+	}
+
+	err = ioutil.WriteFile("bin/readme.txt", []byte(binHelp), 0644)
+	if err != nil {
+		log.Error("Error writing readme")
 		log.Error(err)
 		return
 	}
