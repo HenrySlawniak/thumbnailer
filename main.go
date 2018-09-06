@@ -69,46 +69,11 @@ func main() {
 
 	for _, a := range os.Args[1:] {
 		if FileExists(a) {
-			f, err := os.Open(a)
-			if err != nil {
-				log.Error(err)
-				continue
+			if !IsDir(a) {
+				ProcessFile(a)
+			} else {
+				WalkDir(a)
 			}
-
-			h := sha1.New()
-			io.Copy(h, f)
-			sum := h.Sum(nil)
-			f.Close()
-
-			video := Video{
-				Filename: filepath.Base(a),
-				Location: a,
-				SHA1:     sum,
-			}
-
-			meta, err := getFFProbeMetadata(video.Location)
-			if err != nil {
-				log.Error(err)
-				continue
-			}
-			video.Duration = meta.DurationSeconds()
-
-			for _, stream := range meta.Streams {
-				if stream.CodecType == "video" {
-					video.Width = stream.Width
-					video.Height = stream.Height
-					break
-				}
-			}
-
-			if *writeInfo {
-				j, _ := json.MarshalIndent(video, "", "  ")
-				ioutil.WriteFile(video.Filename+".json", j, 0644)
-			}
-
-			generateThumbnails(&video, *numFrames)
-			generateContactSheet(&video, *numFrames)
-
 		}
 	}
 }
@@ -120,15 +85,91 @@ func createDirectories() {
 		log.Panic(err)
 	}
 
-	err = ioutil.WriteFile("bin/readme.txt", []byte(binHelp), 0644)
+	err = ioutil.WriteFile(filepath.Join("bin", "readme.txt"), []byte(binHelp), 0644)
 	if err != nil {
 		log.Error("Error writing readme")
 		log.Panic(err)
 	}
 }
 
-func FileExists(filename string) bool {
-	if _, err := os.Stat(filename); err == nil {
+func WalkDir(path string) {
+	if !IsDir(path) {
+		return
+	}
+	log.Infof("Walking %s", path)
+
+	filepath.Walk(path, func(p string, stat os.FileInfo, err error) error {
+		if err != nil {
+			return nil
+		}
+
+		if path == p {
+			return nil
+		}
+
+		if IsDir(p) {
+			WalkDir(p)
+		} else {
+			ProcessFile(p)
+		}
+		return nil
+	})
+}
+
+func ProcessFile(path string) {
+	log.Infof("processing %s", path)
+
+	f, err := os.Open(path)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	h := sha1.New()
+	io.Copy(h, f)
+	sum := h.Sum(nil)
+	f.Close()
+
+	video := Video{
+		Filename: filepath.Base(path),
+		Location: path,
+		SHA1:     sum,
+	}
+
+	meta, err := getFFProbeMetadata(video.Location)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	video.Duration = meta.DurationSeconds()
+
+	for _, stream := range meta.Streams {
+		if stream.CodecType == "video" {
+			video.Width = stream.Width
+			video.Height = stream.Height
+			break
+		}
+	}
+
+	if *writeInfo {
+		j, _ := json.MarshalIndent(video, "", "  ")
+		ioutil.WriteFile(video.Filename+".json", j, 0644)
+	}
+
+	generateThumbnails(&video, *numFrames)
+	generateContactSheet(&video, *numFrames)
+}
+
+func IsDir(path string) bool {
+	stat, err := os.Stat(path)
+	if err != nil {
+		log.Panic(err)
+	}
+	return stat.IsDir()
+}
+
+func FileExists(path string) bool {
+	if _, err := os.Stat(path); err == nil {
 		return true
 	}
 	return false
