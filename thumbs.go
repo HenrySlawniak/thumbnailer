@@ -35,9 +35,9 @@ func generateThumbnails(vid *Video, numFrames int) {
 	for i := 0; i < numFrames; i++ {
 		cmd := exec.Command(
 			binary, "-n",
+			"-ss", fmt.Sprintf("%f", ((float64(vid.Duration))/float64(numFrames))*float64(i)),
 			"-i", vid.Location,
 			"-vframes", "1",
-			"-ss", fmt.Sprintf("%f", ((float64(vid.Duration))/float64(numFrames))*float64(i)),
 			"-vf", fmt.Sprintf("scale=%d:-1:", *frameWidth),
 			filepath.Join(os.TempDir(), fmt.Sprintf("%s-%d.png", vid.SHA1.Hex(), i)),
 		)
