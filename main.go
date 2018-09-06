@@ -37,6 +37,7 @@ var (
 	numFrames  = flag.Int("frames", 12, "The number of frames to generate")
 	writeInfo  = flag.Bool("write-info", true, "Write info JSON to file")
 	frameWidth = flag.Int("frame-width", 854, "The width to generate thumbnails at")
+	outputDir  = flag.String("o", ".", "The directory to output to")
 
 	buildTime string
 	commit    string
@@ -83,6 +84,14 @@ func createDirectories() {
 	if err != nil {
 		log.Error("Cannot create bin directory")
 		log.Panic(err)
+	}
+
+	if !FileExists(*outputDir) {
+		err = os.MkdirAll(*outputDir, 0755)
+		if err != nil {
+			log.Error("Cannot create output directory")
+			log.Panic(err)
+		}
 	}
 
 	err = ioutil.WriteFile(filepath.Join("bin", "readme.txt"), []byte(binHelp), 0644)
@@ -154,7 +163,7 @@ func ProcessFile(path string) {
 
 	if *writeInfo {
 		j, _ := json.MarshalIndent(video, "", "  ")
-		ioutil.WriteFile(video.Filename+".json", j, 0644)
+		ioutil.WriteFile(filepath.Join(*outputDir, video.Filename+".json"), j, 0644)
 	}
 
 	generateThumbnails(&video, *numFrames)

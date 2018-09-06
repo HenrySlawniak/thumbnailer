@@ -168,7 +168,7 @@ func generateContactSheet(vid *Video, numFrames int) {
 
 	}
 
-	outFile, err := os.Create(vid.Filename + ".png")
+	outFile, err := os.Create(filepath.Join(*outputDir, vid.Filename+".png"))
 	if err != nil {
 		log.Error(err)
 		return
