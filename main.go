@@ -31,6 +31,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 var (
@@ -154,18 +155,15 @@ func ProcessFile(path string) {
 	video.Meta = meta
 	video.Duration = meta.DurationSeconds()
 
-	hasVideo := false
-
 	for _, stream := range meta.Streams {
 		if stream.CodecType == "video" {
 			video.Width = stream.Width
 			video.Height = stream.Height
-			hasVideo = true
 			break
 		}
 	}
 
-	if !hasVideo {
+	if strings.Contains(meta.Format.FormatName, "pipe") {
 		return
 	}
 
