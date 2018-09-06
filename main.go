@@ -156,6 +156,11 @@ func ProcessFile(path string) {
 	video.Duration = meta.DurationSeconds()
 
 	for _, stream := range meta.Streams {
+		if stream.AverageFrameRate == "0/0" {
+			log.Infof("%s detected as non-video, skipping", video.Filename)
+			return
+		}
+
 		if stream.CodecType == "video" {
 			video.Width = stream.Width
 			video.Height = stream.Height
@@ -164,6 +169,7 @@ func ProcessFile(path string) {
 	}
 
 	if strings.Contains(meta.Format.FormatName, "pipe") {
+		log.Infof("%s detected as image, skipping", video.Filename)
 		return
 	}
 
