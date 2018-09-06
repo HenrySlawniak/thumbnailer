@@ -56,6 +56,7 @@ func init() {
 }
 
 func main() {
+	log.Info("Starting Thumbnailer")
 	if buildTime != "" {
 		log.Info("Built: " + buildTime)
 	}
@@ -64,26 +65,7 @@ func main() {
 	}
 	log.Info("Go: " + runtime.Version())
 
-	err := os.MkdirAll("tmp", 0755)
-	if err != nil {
-		log.Error("Cannot create tmp directory")
-		log.Error(err)
-		return
-	}
-
-	err = os.MkdirAll("bin", 0755)
-	if err != nil {
-		log.Error("Cannot create tmp directory")
-		log.Error(err)
-		return
-	}
-
-	err = ioutil.WriteFile("bin/readme.txt", []byte(binHelp), 0644)
-	if err != nil {
-		log.Error("Error writing readme")
-		log.Error(err)
-		return
-	}
+	createDirectories()
 
 	for _, a := range os.Args[1:] {
 		if FileExists(a) {
@@ -128,6 +110,20 @@ func main() {
 			generateContactSheet(&video, *numFrames)
 
 		}
+	}
+}
+
+func createDirectories() {
+	err := os.MkdirAll("bin", 0755)
+	if err != nil {
+		log.Error("Cannot create bin directory")
+		log.Panic(err)
+	}
+
+	err = ioutil.WriteFile("bin/readme.txt", []byte(binHelp), 0644)
+	if err != nil {
+		log.Error("Error writing readme")
+		log.Panic(err)
 	}
 }
 

@@ -62,7 +62,7 @@ func generateContactSheet(vid *Video, numFrames int) {
 	var FrameHeight int
 	frames := map[int]image.Image{}
 	for i := 0; i < numFrames; i++ {
-		frameLoc := fmt.Sprintf("tmp/%s-%d.png", vid.SHA1.Hex(), i)
+		frameLoc := fmt.Sprintf("%s/%s-%d.png", os.TempDir(), vid.SHA1.Hex(), i)
 		if !FileExists(frameLoc) {
 			log.Errorf("Frame missing from disk `%s`\n", frameLoc)
 			return

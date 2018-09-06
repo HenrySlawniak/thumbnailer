@@ -31,8 +31,6 @@ import (
 func generateThumbnails(vid *Video, numFrames int) {
 	binary := GetFFMpegBinary()
 
-	os.MkdirAll("tmp", 0755)
-
 	for i := 0; i < numFrames; i++ {
 		cmd := exec.Command(
 			binary, "-n",
@@ -40,7 +38,7 @@ func generateThumbnails(vid *Video, numFrames int) {
 			"-vframes", "1",
 			"-ss", fmt.Sprintf("%f", ((float64(vid.Duration))/float64(numFrames))*float64(i)),
 			"-vf", fmt.Sprintf("scale=%d:-1:", *frameWidth),
-			fmt.Sprintf("tmp/%s-%d.png", vid.SHA1.Hex(), i),
+			fmt.Sprintf("%s/%s-%d.png", os.TempDir(), vid.SHA1.Hex(), i),
 		)
 
 		cmd.Stdout = os.Stdout
