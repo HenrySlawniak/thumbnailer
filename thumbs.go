@@ -25,6 +25,7 @@ import (
 	"github.com/go-playground/log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime/debug"
 )
 
@@ -38,7 +39,7 @@ func generateThumbnails(vid *Video, numFrames int) {
 			"-vframes", "1",
 			"-ss", fmt.Sprintf("%f", ((float64(vid.Duration))/float64(numFrames))*float64(i)),
 			"-vf", fmt.Sprintf("scale=%d:-1:", *frameWidth),
-			fmt.Sprintf("%s/%s-%d.png", os.TempDir(), vid.SHA1.Hex(), i),
+			filepath.Join(os.TempDir(), fmt.Sprintf("%s-%d.png", vid.SHA1.Hex(), i)),
 		)
 
 		cmd.Stdout = os.Stdout
