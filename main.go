@@ -34,10 +34,11 @@ import (
 )
 
 var (
-	numFrames  = flag.Int("frames", 12, "The number of frames to generate")
-	writeInfo  = flag.Bool("write-info", true, "Write info JSON to file")
-	frameWidth = flag.Int("frame-width", 854, "The width to generate thumbnails at")
-	outputDir  = flag.String("o", ".", "The directory to output to")
+	numFrames     = flag.Int("frames", 12, "The number of frames to generate")
+	writeInfo     = flag.Bool("write-info", true, "Write info JSON to file")
+	frameWidth    = flag.Int("frame-width", 854, "The width to generate thumbnails at")
+	outputDir     = flag.String("o", ".", "The directory to output to, ignored when in-place is true")
+	outputInPlace = flag.Bool("in-place", false, "Write images next to videos")
 
 	buildTime string
 	commit    string
@@ -153,17 +154,28 @@ func ProcessFile(path string) {
 	video.Meta = meta
 	video.Duration = meta.DurationSeconds()
 
+	hasVideo := false
+
 	for _, stream := range meta.Streams {
 		if stream.CodecType == "video" {
 			video.Width = stream.Width
 			video.Height = stream.Height
+			hasVideo = true
 			break
 		}
 	}
 
+	if !hasVideo {
+		return
+	}
+
 	if *writeInfo {
 		j, _ := json.MarshalIndent(video, "", "  ")
-		ioutil.WriteFile(filepath.Join(*outputDir, video.Filename+".json"), j, 0644)
+		if *outputInPlace {
+			ioutil.WriteFile(filepath.Join(filepath.Dir(video.Location), video.Filename+".json"), j, 0644)
+		} else {
+			ioutil.WriteFile(filepath.Join(*outputDir, video.Filename+".json"), j, 0644)
+		}
 	}
 
 	generateThumbnails(&video, *numFrames)
