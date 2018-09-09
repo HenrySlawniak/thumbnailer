@@ -21,7 +21,6 @@
 package main
 
 import (
-	"path/filepath"
 	"runtime"
 )
 
@@ -29,9 +28,9 @@ import (
 func GetFFMpegBinary() string {
 	var location string
 	if runtime.GOOS == "linux" {
-		location = filepath.Join("bin", "ffmpeg")
+		location = "./ffmpeg"
 	} else if runtime.GOOS == "windows" {
-		location = filepath.Join("bin", "ffmpeg.exe")
+		location = "./ffmpeg.exe"
 	}
 
 	if !FileExists(location) {
@@ -45,9 +44,9 @@ func GetFFMpegBinary() string {
 func GetFFProbeBinary() string {
 	var location string
 	if runtime.GOOS == "linux" {
-		location = filepath.Join("bin", "ffprobe")
+		location = "./ffprobe"
 	} else if runtime.GOOS == "windows" {
-		location = filepath.Join("bin", "ffprobe.exe")
+		location = "./ffprobe.exe"
 	}
 
 	if !FileExists(location) {

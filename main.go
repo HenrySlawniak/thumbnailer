@@ -39,18 +39,11 @@ var (
 	writeInfo     = flag.Bool("write-info", true, "Write info JSON to file")
 	frameWidth    = flag.Int("frame-width", 854, "The width to generate thumbnails at")
 	outputDir     = flag.String("o", ".", "The directory to output to, ignored when in-place is true")
-	outputInPlace = flag.Bool("in-place", false, "Write images next to videos")
+	outputInPlace = flag.Bool("in-place", true, "Write images next to videos")
 
 	buildTime string
 	commit    string
 )
-
-const binHelp = `This directory is used to store binaries for ffmpeg.
-
-Place ffmpeg.exe, ffprobe.exe or the appropriate linux binaries here.
-
-If no binaries are found, thumbnailer will use your PATH.
-`
 
 func init() {
 	flag.Parse()
@@ -82,24 +75,12 @@ func main() {
 }
 
 func createDirectories() {
-	err := os.MkdirAll("bin", 0755)
-	if err != nil {
-		log.Error("Cannot create bin directory")
-		log.Panic(err)
-	}
-
 	if !FileExists(*outputDir) {
-		err = os.MkdirAll(*outputDir, 0755)
+		err := os.MkdirAll(*outputDir, 0755)
 		if err != nil {
 			log.Error("Cannot create output directory")
 			log.Panic(err)
 		}
-	}
-
-	err = ioutil.WriteFile(filepath.Join("bin", "readme.txt"), []byte(binHelp), 0644)
-	if err != nil {
-		log.Error("Error writing readme")
-		log.Panic(err)
 	}
 }
 
