@@ -33,6 +33,7 @@ type Video struct {
 	SHA1     sha1sum
 	Width    int
 	Height   int
+	Codec    string
 	Meta     *ffprobeOutput
 }
 
