@@ -31,13 +31,13 @@ import (
 	"image/color"
 	"image/draw"
 	"image/png"
+	"math"
 	"os"
 	"path/filepath"
 )
 
 const (
 	GutterSize    = 50
-	FramesPerRow  = 3
 	MinSheetWidth = 1200
 
 	FontSize    = 40
@@ -93,9 +93,9 @@ func generateContactSheet(vid *Video, numFrames int) {
 
 	log.Infof("Loaded %d frames for %s", len(frames), vid.Filename)
 
-	rowCount := numFrames / FramesPerRow
+	rowCount := int(math.Max(math.Ceil(float64(numFrames / *framesPerRow)), 1))
 
-	sheetWidth := (FramesPerRow * FrameWidth) + ((FramesPerRow + 1) * GutterSize)
+	sheetWidth := (*framesPerRow * FrameWidth) + ((*framesPerRow + 1) * GutterSize)
 	if sheetWidth < MinSheetWidth {
 		sheetWidth = MinSheetWidth
 	}
@@ -145,9 +145,9 @@ func generateContactSheet(vid *Video, numFrames int) {
 
 	for i := 0; i < len(frames); i++ {
 		frame := frames[i]
-		row := i / FramesPerRow
+		row := i / *framesPerRow
 		yOff := (row * FrameHeight) + GutterSize + HeaderSize + (GutterSize * row)
-		col := i % FramesPerRow
+		col := i % *framesPerRow
 		xOff := col*FrameWidth + GutterSize + (GutterSize * col)
 		rect := image.Rect(xOff, yOff, xOff+FrameWidth, yOff+FrameHeight)
 		draw.Draw(sheet, rect, frame, frame.Bounds().Min, draw.Src)

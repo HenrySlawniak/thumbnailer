@@ -40,6 +40,7 @@ var (
 	frameWidth    = flag.Int("frame-width", 854, "The width to generate thumbnails at")
 	outputDir     = flag.String("o", ".", "The directory to output to, ignored when in-place is true")
 	outputInPlace = flag.Bool("in-place", true, "Write images next to videos")
+	framesPerRow  = flag.Int("frames-per-row", 3, "The number of frames per each row in the final contact sheet")
 
 	buildTime string
 	commit    string
