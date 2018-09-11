@@ -66,7 +66,7 @@ func main() {
 
 	createDirectories()
 
-	for _, a := range os.Args[1:] {
+	for _, a := range flag.Args() {
 		if FileExists(a) {
 			if !IsDir(a) {
 				ProcessFile(a)
