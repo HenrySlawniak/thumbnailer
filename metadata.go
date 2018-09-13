@@ -31,6 +31,8 @@ type ffprobeOutput struct {
 	Format  struct {
 		Duration   string
 		FormatName string `json:"format_name"`
+		BitRate    string `json:"bit_rate"`
+		Size       string
 	}
 }
 
@@ -55,7 +57,8 @@ func getFFProbeMetadata(path string) (*ffprobeOutput, error) {
 		binary,
 		"-v", "error",
 		"-show_streams",
-		"-show_entries", "format=width,height,duration_ts,duration,index,codec_type,codec_name,format_name,avg_frame_rate",
+		"-show_format",
+		// "-show_entries", "format=width,height,duration_ts,duration,index,codec_type,codec_name,format_name,avg_frame_rate,bit_rate",
 		"-print_format", "json",
 		path,
 	)
