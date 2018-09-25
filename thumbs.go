@@ -32,6 +32,10 @@ import (
 func generateThumbnails(vid *Video, numFrames int) {
 	binary := GetFFMpegBinary()
 
+	if *frameWidth == 0 {
+		*frameWidth = vid.Width
+	}
+
 	for i := 0; i < numFrames; i++ {
 		cmd := exec.Command(
 			binary, "-n",
