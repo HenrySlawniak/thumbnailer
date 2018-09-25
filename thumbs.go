@@ -46,8 +46,8 @@ func generateThumbnails(vid *Video, numFrames int) {
 			filepath.Join(os.TempDir(), fmt.Sprintf("%s-%d.png", vid.SHA1.Hex(), i)),
 		)
 
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
+		// cmd.Stdout = os.Stdout
+		// cmd.Stderr = os.Stderr
 
 		err := cmd.Run()
 		if err != nil {

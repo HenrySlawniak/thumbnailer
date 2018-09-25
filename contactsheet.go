@@ -40,8 +40,8 @@ const (
 	GutterSize    = 50
 	MinSheetWidth = 1200
 
-	FontSize    = 40
-	FontSpacing = 0.9
+	FontSize    = 30
+	FontSpacing = 0.7
 	FontDPI     = 72
 	HeaderSize  = 200
 )
@@ -133,17 +133,17 @@ func generateContactSheet(vid *Video, numFrames int) {
 			log.Error(err)
 			return
 		}
-		pt.X += c.PointToFixed((FontSize * .7) * FontSpacing)
+		pt.X += c.PointToFixed(FontSize * FontSpacing)
 	}
 
 	pt = freetype.Pt(10, 65+FontSize+int(c.PointToFixed((FontSize))>>6))
-	for _, s := range fmt.Sprintf("Duration: %s, Dimmensions: %dx%d, Codec: %s", stampToString(vid.Duration), vid.Width, vid.Height, vid.Codec) {
+	for _, s := range fmt.Sprintf("Duration: %s, Dimmensions: %dx%d, Bitrate: %s kbps, Codec: %s", stampToString(vid.Duration), vid.Width, vid.Height, vid.Meta.Format.BitRate, vid.Codec) {
 		_, err := c.DrawString(string(s), pt)
 		if err != nil {
 			log.Error(err)
 			return
 		}
-		pt.X += c.PointToFixed((FontSize * .7) * FontSpacing)
+		pt.X += c.PointToFixed(FontSize * FontSpacing)
 	}
 
 	if *writeAttribution {
@@ -155,7 +155,7 @@ func generateContactSheet(vid *Video, numFrames int) {
 				log.Error(err)
 				return
 			}
-			pt.X += c.PointToFixed((FontSize * .3) * FontSpacing)
+			pt.X += c.PointToFixed((FontSize * 0.5) * FontSpacing)
 		}
 		c.SetFontSize(FontSize)
 	}

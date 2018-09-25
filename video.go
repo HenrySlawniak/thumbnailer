@@ -39,12 +39,12 @@ type Video struct {
 
 type sha1sum []byte
 
-func (s *sha1sum) MarshalJSON() ([]byte, error) {
+func (s sha1sum) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Bytes []byte
 		Hex   string
 	}{
-		Bytes: []byte(*s),
+		Bytes: []byte(s),
 		Hex:   s.Hex(),
 	})
 }
