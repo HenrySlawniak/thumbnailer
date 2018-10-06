@@ -23,6 +23,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"strings"
 )
 
@@ -51,4 +52,13 @@ func (s sha1sum) MarshalJSON() ([]byte, error) {
 
 func (s *sha1sum) Hex() string {
 	return strings.TrimLeft(fmt.Sprintf("%x", s), "&")
+}
+
+func (v *Video) GetOutputDir() string {
+	if *outputDir != "" {
+		return *outputDir
+	} else if *outputInPlace {
+		return filepath.Dir(v.Location)
+	}
+	return *outputDir
 }
