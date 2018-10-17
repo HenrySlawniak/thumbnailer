@@ -28,14 +28,16 @@ import (
 )
 
 type Video struct {
-	Filename string
-	Location string
-	Duration float64
-	SHA1     sha1sum
-	Width    int
-	Height   int
-	Codec    string
-	Meta     *ffprobeOutput
+	Filename   string
+	Location   string
+	Duration   float64
+	SHA1       sha1sum
+	Width      int
+	Height     int
+	Codec      string
+	Meta       *ffprobeOutput
+	Step       float64
+	ThumbCount int
 }
 
 type sha1sum []byte

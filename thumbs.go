@@ -29,17 +29,16 @@ import (
 	"runtime/debug"
 )
 
-func generateThumbnails(vid *Video, numFrames int) {
+func generateThumbnails(vid *Video) {
 	binary := GetFFMpegBinary()
 
 	if *frameWidth == 0 {
 		*frameWidth = vid.Width
 	}
-
-	for i := 0; i < numFrames; i++ {
+	for i := 0; i < vid.ThumbCount; i++ {
 		cmd := exec.Command(
 			binary, "-n",
-			"-ss", fmt.Sprintf("%f", ((float64(vid.Duration))/float64(numFrames))*float64(i)),
+			"-ss", fmt.Sprintf("%f", vid.Step*float64(i)),
 			"-i", vid.Location,
 			"-vframes", "1",
 			"-vf", fmt.Sprintf("scale=%d:-1:", *frameWidth),

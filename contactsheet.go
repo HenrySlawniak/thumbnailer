@@ -60,11 +60,11 @@ func init() {
 	}
 }
 
-func generateContactSheet(vid *Video, numFrames int) {
+func generateContactSheet(vid *Video) {
 	var FrameWidth int
 	var FrameHeight int
 	frames := map[int]image.Image{}
-	for i := 0; i < numFrames; i++ {
+	for i := 0; i < vid.ThumbCount; i++ {
 		frameLoc := filepath.Join(os.TempDir(), fmt.Sprintf("%s-%d.png", vid.SHA1.Hex(), i))
 		if !FileExists(frameLoc) {
 			log.Errorf("Frame missing from disk `%s`\n", frameLoc)
@@ -94,7 +94,7 @@ func generateContactSheet(vid *Video, numFrames int) {
 
 	log.Infof("Loaded %d frames for %s", len(frames), vid.Filename)
 
-	rowCount := int(math.Max(math.Ceil(float64(numFrames / *framesPerRow)), 1))
+	rowCount := int(math.Max(math.Ceil(float64(vid.ThumbCount / *framesPerRow)), 1))
 
 	sheetWidth := (*framesPerRow * FrameWidth) + ((*framesPerRow + 1) * GutterSize)
 	if sheetWidth < MinSheetWidth {
@@ -169,7 +169,7 @@ func generateContactSheet(vid *Video, numFrames int) {
 		rect := image.Rect(xOff, yOff, xOff+FrameWidth, yOff+FrameHeight)
 		draw.Draw(sheet, rect, frame, frame.Bounds().Min, draw.Src)
 
-		frameTime := stampToString(((float64(vid.Duration)) / float64(numFrames)) * float64(i))
+		frameTime := stampToString(((float64(vid.Duration)) / float64(vid.ThumbCount)) * float64(i))
 		stampSize := FontSize * 0.7
 		c.SetFontSize(stampSize)
 		c.SetSrc(textCol)
