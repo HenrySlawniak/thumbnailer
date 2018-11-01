@@ -169,7 +169,7 @@ func generateContactSheet(vid *Video) {
 		rect := image.Rect(xOff, yOff, xOff+FrameWidth, yOff+FrameHeight)
 		draw.Draw(sheet, rect, frame, frame.Bounds().Min, draw.Src)
 
-		frameTime := stampToString(((float64(vid.Duration)) / float64(vid.ThumbCount)) * float64(i))
+		frameTime := stampToString(vid.Step * float64(i))
 		stampSize := FontSize * 0.7
 		c.SetFontSize(stampSize)
 		c.SetSrc(textCol)
