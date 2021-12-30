@@ -1,0 +1,20 @@
+# github.com/go-playground/ansi v2.1.0+incompatible
+## explicit
+github.com/go-playground/ansi
+# github.com/go-playground/errors v3.3.0+incompatible
+## explicit
+github.com/go-playground/errors
+# github.com/go-playground/log v6.3.0+incompatible
+## explicit
+github.com/go-playground/log
+github.com/go-playground/log/handlers/console
+# github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
+## explicit
+github.com/golang/freetype
+github.com/golang/freetype/raster
+github.com/golang/freetype/truetype
+# golang.org/x/image v0.0.0-20211028202545-6944b10bf410
+## explicit; go 1.12
+golang.org/x/image/font
+golang.org/x/image/font/gofont/gomono
+golang.org/x/image/math/fixed
